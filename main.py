@@ -16,6 +16,7 @@
 #
 import webapp2
 import re
+import cgi
 
 form = """
 <form method='post'>
@@ -60,7 +61,9 @@ form = """
 
     <input type="submit"/>
 """
-
+def escape_html(s):
+    return cgi.escape(s, quote = True)
+    
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def username_valid(username_post):
     if USER_RE.match(username_post):
@@ -143,11 +146,11 @@ def email_valid(email_post):
 
 class MainHandler(webapp2.RequestHandler):
     def write_form(self, username="", username_error="", password_error="", verify_error="", email="", email_error=""):
-        self.response.out.write(form % {"username": username,
+        self.response.out.write(form % {"username": escape_html(username),
                                         "username_error": username_error,
                                         "password_error": password_error,
                                         "verify_error": verify_error,
-                                        "email": email,
+                                        "email": escape_html(email),
                                         "email_error": email_error})
 
     def get(self):
